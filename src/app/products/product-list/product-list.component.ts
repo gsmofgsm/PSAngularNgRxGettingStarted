@@ -6,6 +6,7 @@ import { Store, select } from '@ngrx/store';
 import * as fromProduct from '../state/product.reducer';
 import * as productActions from '../state/product.actions';
 import { takeWhile } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'pm-product-list',
@@ -23,6 +24,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
   // Used to highlight the selected product in the list
   selectedProduct: Product | null;
   componentActive = true;
+  products$: Observable<Product[]>;
 
   constructor(private productService: ProductService,
               private store: Store<fromProduct.State>) { }
@@ -34,11 +36,8 @@ export class ProductListComponent implements OnInit, OnDestroy {
     );
 
     this.store.dispatch(new productActions.Load());
-    this.store.pipe(
-        select(fromProduct.getProducts),
-        takeWhile(() => this.componentActive)
-      )
-      .subscribe((products: Product[]) => this.products = products);
+    this.products$ = this.store.pipe(select(fromProduct.getProducts));
+
     // this.productService.getProducts().subscribe({
     //   next: (products: Product[]) => this.products = products,
     //   error: (err: any) => this.errorMessage = err.error
