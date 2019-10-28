@@ -25,6 +25,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
   selectedProduct: Product | null;
   componentActive = true;
   products$: Observable<Product[]>;
+  errorMessage$: Observable<string>;
 
   constructor(private productService: ProductService,
               private store: Store<fromProduct.State>) { }
@@ -37,7 +38,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
     this.store.dispatch(new productActions.Load());
     this.products$ = this.store.pipe(select(fromProduct.getProducts));
-
+    this.errorMessage$ = this.store.pipe(select(fromProduct.getError));
     // this.productService.getProducts().subscribe({
     //   next: (products: Product[]) => this.products = products,
     //   error: (err: any) => this.errorMessage = err.error
